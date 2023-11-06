@@ -14,7 +14,7 @@ app.get('/', (_request, response) => {
 
 // Create route; posts would be replaced with 'videos'
 // Get request function 
-app.get('/posts', (request, response) => {
+app.get('/', (request, response) => {
     const something = fs.readFileSync('./data/blog-posts.json');
     response.send(something);
 });
