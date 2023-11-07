@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const fs = require('fs');
+const router = express.Router();
 const { v4: uuid } = require('uuid');
 
 
@@ -9,30 +10,45 @@ app.use(cors());
 app.use(express.json());
 app.use('/photos', express.static('./static/images'));
 
-app.get('/', (request, response) => {
+router.get('/', (request, response) => {
     const something = fs.readFileSync('../data/video-details.json');
-    response.send(something);
+    const parseSomething = JSON.parse(something);
+    response.send(parseSomething);
 });
 
-app.post('/', (request, response) => {
+router.post('/', (request, response) => {
     const something = fs.readFileSync('../data/video-details.json');
     const parseSomething = JSON.parse(something);
 
-    const { username, comment } = request.body;
+    const newVid =
+    {
+        id: uuid(),
+        title:title,
+        views:0,
+        likes:0,
+        channel: "Posted account",
+        image: image,
+        description:description,
+        duration:"3:00",
+        timestamp:Date.now(),
+        comments:[]
+    }
 
-parseSomething.push(newObj);
+parseSomething.push(newVid);
     fs.writeFileSync('../data/video-details.json', JSON.stringify(parseSomething));
     response.json(newObj);
 
 });
 
-app.get('/posts/:searchParam', (request, response) => {
-    const something = fs.readFileSync('./data/blog-posts.json');
+router.get('/posts/:searchParam', (request, response) => {
+    const { id } = request.params
+    const something = fs.readFileSync('../data/video-details.json');
     const parseSomething = JSON.parse(something);
     const found = parseSomething.find( x => x.username === request.params.searchParam);
-    response.json(found);
+    if(found){
+        response.json(found)}
+    else(response.status(404).send('aint here'))
 });
 
-app.listen(8081, () => {
-    console.log('listening on port 8081');
-});
+
+module.exports = router;
