@@ -1,14 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
+const app = express();
 const { v4: uuid } = require('uuid');
 
 const readData = () => {
-    return JSON.parse(fs.readFileSync('./data/video-details.json', 'utf8'));
+    return JSON.parse(fs.readFileSync('./data/video-details.json', 'utf8'));
 };
     
 const writeData = (data) => {
-    fs.writeFileSync('./data/video-details.json', JSON.stringify(data, null, 2), 'utf8');
+    fs.writeFileSync('./data/video-details.json', JSON.stringify(data, null, 2), 'utf8');
 };
 
 router.get('/', (request, response) => {
@@ -26,20 +27,16 @@ router.get('/:id', (request, response) => {
     response.json(thing)
 });
 
-    
-    
+router.post('/', (request, response) => {
+    const something = fs.readFileSync('../data/video-details.json');
+    const parseSomething = JSON.parse(something);
+    const { username, comment } = request.body;
 
-// router.post('/', (request, response) => {
-//     const something = fs.readFileSync('../data/video-details.json');
-//     const parseSomething = JSON.parse(something);
+parseSomething.push(newObj);
+    fs.writeFileSync('../data/video-details.json', JSON.stringify(parseSomething));
+    response.json(newObj);
 
-//     const { username, comment } = request.body;
-
-// parseSomething.push(newObj);
-//     fs.writeFileSync('../data/video-details.json', JSON.stringify(parseSomething));
-//     response.json(newObj);
-
-// });
+});
 
 // router.get('/posts/:searchParam', (request, response) => {
 //     const something = fs.readFileSync('../data/video-details.json');
@@ -48,4 +45,5 @@ router.get('/:id', (request, response) => {
 //     response.json(found);
 // });
 
-module.exports = router
+
+module.exports = router;

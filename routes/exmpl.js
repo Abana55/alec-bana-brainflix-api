@@ -47,17 +47,6 @@
 //     response.json(found);
 // });
 
-// app.listen(8082, () => {
-//     console.log('listening on port 8082');
-// });
-
-
-// ** reference blog-client for frontend integration (urls) ** 
-
-// package.json
-// “scripts”: {
-//     “start”: “nodemon server.js”
-// } <— switch ‘node’ with ‘nodemon’
 
 // terminal
 // npm start
@@ -66,7 +55,7 @@
 // HomePage.js
 // useEffect( () => {
 //         async function postSomething() {
-//             const response = await axios.post('http://localhost:8082/posts', newPosts);
+//             const response = await axios.post('http://localhost:8081/posts', newPosts);
 //         }
 //         if(newPosts) {
 //             postSomething();
