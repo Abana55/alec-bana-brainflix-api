@@ -1,49 +1,61 @@
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
-const app = express();
 const { v4: uuid } = require('uuid');
 
 const readData = () => {
-    return JSON.parse(fs.readFileSync('./data/video-details.json', 'utf8'));
+    try {
+        const data = fs.readFileSync('./data/video-details.json', 'utf8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error('Error reading data:', err);
+        return [];
+    }
 };
-    
+
 const writeData = (data) => {
-    fs.writeFileSync('./data/video-details.json', JSON.stringify(data, null, 2), 'utf8');
+    try {
+        fs.writeFileSync('./data/video-details.json', JSON.stringify(data, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Error:', err);
+    }
 };
 
 router.get('/', (request, response) => {
-    const something = readData()
-    response.json(something.map(({id, title, channel, image, timestamp, likes, views, comments}) => ({id, title, channel, image, timestamp, likes, views, comments})))
+    const data = readData();
+    response.json(data);
 });
 
 router.get('/:id', (request, response) => {
-    const {id} = request.params;
-    const something = readData();
-    const thing = something.find((thing) => thing.id === id)
-    if(!thing){
-        return response.status(404).json({message:'video aint here'})
+    const { id } = request.params;
+    const data = readData();
+    const video = data.find((things) => things.id === id);
+    if (!video) {
+        return response.status(404).json({ message: 'Video not here' });
     }
-    response.json(thing)
+    response.json(video);
 });
 
 router.post('/', (request, response) => {
-    const something = fs.readFileSync('../data/video-details.json');
-    const parseSomething = JSON.parse(something);
-    const { username, comment } = request.body;
+    const data = readData();
+    const { title, description } = request.body;
 
-parseSomething.push(newObj);
-    fs.writeFileSync('../data/video-details.json', JSON.stringify(parseSomething));
-    response.json(newObj);
+    const newVideo = {
+        id: uuid(),
+        title,
+        description,
+        channel: "Posted account",
+        likes: 0, 
+        views: 0, 
+        duration: "4:00",
+        video: "http://localhost:8087/videos?images",
+        timestamp: Date.now(), 
+        comments: [],
+    };
 
+    data.push(newVideo);
+    writeData(data);
+    response.json(newVideo);
 });
-
-// router.get('/posts/:searchParam', (request, response) => {
-//     const something = fs.readFileSync('../data/video-details.json');
-//     const parseSomething = JSON.parse(something);
-//     const found = parseSomething.find( x => x.username === request.params.searchParam);
-//     response.json(found);
-// });
-
 
 module.exports = router;
