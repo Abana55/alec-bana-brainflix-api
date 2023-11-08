@@ -1,23 +1,30 @@
 const express = require('express');
-const app = express();
-const cors = require('cors');
 const fs = require('fs');
 const router = express.Router();
 const { v4: uuid } = require('uuid');
 
 
-app.use(cors());
-app.use(express.json());
-app.use('/photos', express.static('./static/images'));
+const shmeagles = () => {
+    return JSON.parse(fs.readFileSync('./data/video-details.json', 'utf8'));
+};
 
-router.get('/', (request, response) => {
-    const something = fs.readFileSync('../data/video-details.json');
-    const parseSomething = JSON.parse(something);
-    response.send(parseSomething);
+router.get('/', (req, res) => {
+    const videos = shmeagles();
+    res.json(videos.map(({ id, title, channel, image, timestamp, likes, views, comments }) => ({ id, title, channel, image, timestamp, likes, views, comments })));
+});
+
+router.get('/:id', (req, res) => {
+    const { id } = req.params;
+    const videos = shmeagles();
+    const video = videos.find((video) => video.id === id);
+    if (!video) {
+        return res.status(404).json({ message: "Shmeagle can't find your beagle" });
+    }
+    res.json(video);
 });
 
 router.post('/', (request, response) => {
-    const something = fs.readFileSync('../data/video-details.json');
+    const something = fs.readFileSync('./data/video-details.json');
     const parseSomething = JSON.parse(something);
 
     const newVid =
@@ -26,7 +33,7 @@ router.post('/', (request, response) => {
         title:title,
         views:0,
         likes:0,
-        channel: "Posted account",
+        channel: "Great Chieftan",
         image: image,
         description:description,
         duration:"3:00",
@@ -40,15 +47,7 @@ parseSomething.push(newVid);
 
 });
 
-router.get('/posts/:searchParam', (request, response) => {
-    const { id } = request.params
-    const something = fs.readFileSync('../data/video-details.json');
-    const parseSomething = JSON.parse(something);
-    const found = parseSomething.find( x => x.username === request.params.searchParam);
-    if(found){
-        response.json(found)}
-    else(response.status(404).send('aint here'))
-});
+
 
 
 module.exports = router;

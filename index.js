@@ -9,6 +9,6 @@ app.use('/images', express.static('./public/images'));
 app.use('/videos', videoRouter);
 
 
-app.listen(8087, () => {
-    console.log('Server listening on port 8087');
+app.listen(8080, () => {
+    console.log('Server listening on port 8080');
 });
